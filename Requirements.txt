@@ -1,0 +1,9 @@
+fastapi
+fastapi[standard]
+uvicorn
+sqlalchemy
+psycopg2-binary
+firebase-admin
+requests
+python-jose
+paystackapi
