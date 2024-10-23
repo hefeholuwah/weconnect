@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Form
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from .auth import router as auth_router
@@ -8,7 +8,7 @@ from services.firebase_service import verify_firebase_token, create_user
 from services.session_service import create_session, end_session, is_session_allowed, update_daily_usage
 from app.database import get_db
 from models.user import UserSession, User
-from models.user import SESSION_LIMITS
+from services.session_service import SESSION_LIMITS
 
 app = FastAPI()
 
@@ -34,9 +34,11 @@ async def get_current_user(token: str):
     return user
 
 @app.post("/login/")
-async def authenticate_user(token: str):
+async def authenticate_user(token: str = Form(...)):
     """Authenticate user via Firebase token."""
     user = await get_current_user(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid Firebase token")
     return {"message": f"Authenticated {user['uid']}"}
 
 @app.get("/protected/")

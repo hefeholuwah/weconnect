@@ -1,2 +1,4 @@
 .env
 *.json
+generate.py
+/env
